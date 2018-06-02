@@ -80,9 +80,12 @@
       project-name)))
 
 (defn main []
-  (let [project-name (get-project-name)]
-    (do
-      (mkclj! {:project-name project-name})
-      (shutdown-agents))))
+  (let [initial-path (System/getProperty "user.dir")
+        project-name (get-project-name)]
+    (if-not (.exists (File. (str initial-path "/" project-name)))
+      (do
+        (mkclj! {:project-name project-name :initial-path initial-path})
+        (shutdown-agents))
+      (println project-name "already exists"))))
 
 (main)
