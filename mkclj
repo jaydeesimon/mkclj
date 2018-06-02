@@ -16,8 +16,12 @@
 (defn rand-number []
   (rand-int-range 100 9999))
 
-(defn generate-project-name []
-  (format "%s-%s-%d" (rand-nth adjectives) (rand-nth nouns) (rand-number)))
+(defn generate-project-name
+  ([] (generate-project-name {:with-num false}))
+  ([{:keys [with-num]}]
+   (if with-num
+     (format "%s-%s-%d" (rand-nth adjectives) (rand-nth nouns) (rand-number))
+     (format "%s-%s" (rand-nth adjectives) (rand-nth nouns)))))
 
 (defn mkdirs [path]
   (.mkdirs (File. path)))
@@ -51,7 +55,7 @@
     (sh/with-sh-dir path
       (sh/sh "clj" "-Spom"))))
 
-(defn copy-path-to-clipboard! [path]
+(defn try-copy-path-to-clipboard! [path]
   (try
     (sh/sh "pbcopy" :in path)
     (println path "copied to clipboard")
@@ -69,7 +73,7 @@
       (write-gitignore! path)
       (write-readme! path)
       (run-clj-pom! path)
-      (copy-path-to-clipboard! path)
+      (try-copy-path-to-clipboard! path)
       (println "Created" project-name "at" path))))
 
 (defn get-project-name []
