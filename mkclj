@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+"exec" "clj" "$0" "$@"
+
+(ns mkclj.core
+  (:require [clojure.string :as str]
+            [clojure.java.shell :as sh])
+  (:import (java.io File IOException)))
+
+(defn mkdirs [path]
+  (.mkdirs (File. path)))
+
+(defn write-deps-edn! [path]
+  (spit (str path "/deps.edn") "{:paths [\"src\" \"resources\"]}"))
+
+(defn normalize-project-name [s]
+  (-> (str/replace s "-" "_")
+      (str/lower-case)))
+
+(defn write-core-clj! [path project-name]
+  (let [project-name-us (normalize-project-name project-name)
+        dir (str path "/src/" project-name-us)]
+    (mkdirs dir)
+    (spit (str dir "/core.clj")
+          (format "(ns %s.core)\n" project-name))))
+
+(defn write-gitignore! [path]
+  (let [entries [".idea/" "*.iml" ".cpcache" "target/" ".nrepl-port" "pom.xml"]]
+    (spit (str path "/.gitignore")
+          (str/join "\n" entries))))
+
+(defn write-readme! [path]
+  (spit (str path "/README.md")
+        "I exist because..."))
+
+(defn run-clj-pom! [path]
+  (do
+    (println "Generating pom.xml")
+    (sh/with-sh-dir path
+      (sh/sh "clj" "-Spom"))))
+
+(defn copy-path-to-clipboard! [path]
+  (try
+    (sh/sh "pbcopy" :in path)
+    (println path "copied to clipboard")
+    (catch IOException _)))
+
+(defn mkclj! [{:keys [project-name initial-path]}]
+  (let [initial-path (or initial-path (System/getProperty "user.dir"))
+        path (format "%s/%s" initial-path project-name)]
+    (do
+      (mkdirs path)
+      (mkdirs (str path "/resources"))
+      (println "Generating project files")
+      (write-deps-edn! path)
+      (write-core-clj! path project-name)
+      (write-gitignore! path)
+      (write-readme! path)
+      (run-clj-pom! path)
+      (copy-path-to-clipboard! path)
+      (println "Created" project-name "at" path))))
+
+(defn main []
+  (let [project-name (first *command-line-args*)]
+    (if project-name
+      (do
+        (mkclj! {:project-name project-name})
+        (shutdown-agents))
+      (println "Usage: mkclj <project-name>"))))
+
+(main)
