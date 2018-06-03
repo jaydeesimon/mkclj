@@ -5,7 +5,7 @@ Clojure programmers have very [specific workflows](https://clojureverse.org/t/sh
 
 # What does it do?
 
-All it does is bootstrap a directory for Clojure development. It's a custom, paired-down `lein new app` without Leiningen.
+All it does is bootstrap a directory for Clojure development. It's a custom, pared-down `lein new app` without Leiningen.
 
 ```
 $ mkclj my-super-duper-project
