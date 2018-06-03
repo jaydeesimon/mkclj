@@ -30,6 +30,8 @@ Great for when those impromptu moments of inspiration hit me.
 
 This program is specifically tailored to my needs so reusing it exactly as-is may not work for you but if it serves as inspiration for your own version then great!
 
+The following will happen, not necessarily in this order.
+
 * Generates a project name if one is not specified.
 * Creates a `src` directory, a package based on the project name, and a `core` namespace.
 * Creates a `resources` directory because I often operate on files such as HTML, CSVs and this is where I like to put them.
@@ -37,7 +39,7 @@ This program is specifically tailored to my needs so reusing it exactly as-is ma
 * Creates a `.gitignore`.
 * Creates a `README.md`.
 * Runs `clj -Spom`. I am most productive inside of Cursive (thanks Colin!) and use the generated pom.xml to import the project into Cursive.
-* Tries copying the absolute path to the project to the clipboard. This will only work on a Mac since it relies on `pbcopy` being in your `PATH`. As I mentioned above, my next move after creating the project is to open Cursive and import the project and having the path in the clipboard allows me to do that quickly.
+* Tries copying the absolute path to the project to the clipboard. This will only work on a Mac since it relies on `pbcopy` being in your `PATH`. If you are not on a Mac, it will fail silently. As I mentioned above, my next move after creating the project is to open Cursive and import the project and having the path in the clipboard allows me to do that quickly.
 
 # Prerequisites
 
